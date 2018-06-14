@@ -1,0 +1,480 @@
+html, body {
+    height: 100%;
+}
+
+html, body, h2, p {
+	margin: 0;
+}
+
+html {
+    background: #f2f2f2;
+    color: #4c4c4c;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased
+}
+
+body, input, #msgbox {
+    line-height: 1.5;
+    font-family: 'Microsoft YaHei', arial, 'Hiragino Sans GB', '\5fae\8f6f\96c5\9ed1', '\5b8b\4f53', arial, verdana, helvetica, sans-serif
+}
+
+body {
+    background: url(../images/bodybg.jpg) no-repeat center center;
+    background-size: cover;
+    position: relative;
+}
+
+img {
+    vertical-align: top;
+}
+
+.contain {
+	width: 800px;
+	height: 600px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -300px;
+	margin-left: -400px;
+}
+
+.contain .left {
+	height: 100%;
+    background: #eeeeee;
+    float: left;
+    width: 600px;
+}
+
+.contain .right {
+	height: 100%;
+    width: 200px;
+    float: left;
+    background: #2e3238;
+    float: right;
+}
+
+.contain .left .title {
+	height: 49px;
+    line-height: 49px;
+    margin: 0 20px;
+    border-bottom: 1px solid #d5d5d5;
+    font-size: 16px;
+}
+
+.contain .left .title h2 {
+    float: left;
+    font-size: 100%;
+}
+
+.contain .left .title span {
+    float: right;
+    text-align: right;
+}
+
+.contain .left .title span a {
+    color: #046cd3;
+    text-decoration: none;
+}
+
+.contain .left .title span span {
+    float: none;
+}
+
+.contain .left .showmsg {
+    height: 370px;
+    overflow: auto;
+}
+
+.contain .left .sendmsg {
+    height: 179px;
+    border-top: 1px solid #d5d5d5;
+}
+
+/* .contain .left .sendmsg {
+    background-color: #fff;
+} */
+
+.contain .left .sendmsg .toolbar {
+    height: 30px;
+    padding: 5px;
+    position: relative;
+
+}
+
+.contain .left .sendmsg .toolbar .exprebox {
+    width: 240px;
+    position: absolute;
+    bottom: 33px;
+    left: 1px;
+    display: none;
+}
+
+.contain .left .sendmsg .toolbar .exprebox img {
+    display: block;
+    float: left;
+    border: 1px solid #d5d5d5;
+    margin-left: -1px;
+    margin-top: -1px;
+    padding: 5px;
+    background: #ffffff;
+    cursor: pointer;
+    -webkit-transition: all 100ms;
+    -o-transition: all 100ms;
+    transition: all 100ms
+}
+
+.contain .left .sendmsg .toolbar .exprebox img:hover {
+    border-color: #0757a6;
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+    transform: scale(1);
+}
+
+.contain .left .sendmsg .toolbar .icobtn {
+    line-height: 30px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.contain .left .sendmsg #msgbox {
+	overflow: auto; 
+    font-size: 14px;
+    border: none;
+    padding: 0 1.5%;
+    height: 100px;
+    outline: none;
+}
+
+.contain .right .title {
+    height: 49px;
+    line-height: 50px;
+    padding: 0 20px;
+    color: #ffffff;
+    border-bottom: 1px solid #292c33;
+}
+
+.contain .right .userlist {
+    height: 550px;
+    overflow: auto;
+}
+
+.contain .right .userlist .users {
+    position: relative;
+    padding: 10px 20px;
+    border-bottom: 1px solid #292c33;
+}
+
+div.message {
+    transform:scale(0); 
+    transition: 0.5s;
+    width: 150px;
+    height: 100px;
+    padding:10px;
+    background-color: #fff;
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    box-shadow:0px 0px 3px 3px #aaa;
+    border-radius: 3px;
+    color: #000;
+    z-index: 1000;
+}
+
+.contain .right .userlist .users .img {
+    display: block;
+    height: 20px;
+    width: 20px;
+    overflow: hidden;
+    float: left;
+    margin-right: 10px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+    border-radius: 3px;
+}
+
+div.message span {
+    /*margin-left: 5px;*/
+    margin-right: 45px;
+}
+
+div.message img {
+    width: 60px;
+    height: 60px;
+    border-radius: 3px;
+}
+
+.contain .right .userlist .users p {
+    float: left;
+    color: #ffffff;
+    font-size: 12px;
+    width: 115px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.contain .right .userlist .users:after {
+    content: "\0020";
+    display: block;
+    height: 0;
+    overflow: hidden;
+    clear: both;
+}
+
+.contain .left .showmsg .warp {
+    margin: 10px 20px;
+}
+
+.contain .left .showmsg .warp .system {
+    text-align: center;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.contain .left .showmsg .warp .system .msg {
+    display: inline-block;
+    min-width: 70%;
+    line-height: 20px;
+    padding: 1px 20px;
+    background: #E6E4E4;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+    color: #999999;
+}
+
+.contain .left .showmsg .warp .system .msg .mark {
+    color: #cc0000;
+}
+
+.msglist.me {
+    float: right;
+}
+
+.msglist.me .proto {
+    float: right;
+    margin-right: 0;
+    margin-left: 20px;
+}
+
+.msglist.me .msgwarp {
+    float: right;
+    text-align: right;
+}
+
+.msglist .msgwarp .name {
+    margin-bottom: 5px;
+    color: #8b8b8b;
+}
+
+.msglist.me .msgwarp .contentmsg {
+    background: #78cdf8;
+}
+
+.contentmsg img {
+    max-width: 400px;
+}
+
+
+.msglist.me .msgwarp .contentmsg .sanjiao {
+    border-top: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 20px solid #78cdf8;
+    right: -20px;
+    left: initial;
+}
+
+.msglist {
+    width: 550px;
+    padding-top: 10px;
+    margin-bottom: 10px;
+    float: left;
+}
+
+.msglist .proto {
+    width: 40px;
+    height: 40px;
+    float: left;
+    margin-right: 20px;
+    overflow: hidden;
+    border-radius: 50%;
+    display: block;
+}
+
+.msglist .msgwarp {
+    float: left;
+    text-align: left;
+    font-size: 12px;
+    margin-top: -5px;
+}
+
+.msglist .msgwarp .name {
+    margin-bottom: 5px;
+    color: #8b8b8b;
+}
+
+.msglist .msgwarp .contentmsg {
+    max-width: 430px;
+    word-wrap: break-word;
+    padding: 10px;
+    background: #cdd7e2;
+    color: #252424;
+    border-radius: 10px;
+    position: relative;
+    display: inline-block;
+    text-align: left;
+}
+
+.msglist .msgwarp .contentmsg .sanjiao {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-right: 20px solid #cdd7e2;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid transparent;
+    position: absolute;
+    top: 2px;
+    left: -20px;
+}
+
+.sendmsg .btn {
+    background: #ffffff;
+    cursor: pointer;
+    display: inline-block;
+    border: 1px solid #c1c1c1;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    padding: 3px 20px;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.sendmsg .action {
+    text-align: right;
+    padding: 5px 17px;
+}
+
+.sendmsg .action span {
+    line-height: 30px;
+    font-size: 14px;
+    color: #999;
+}
+
+
+::-webkit-scrollbar {  
+  width: 14px;  
+  height: 14px; 
+  display:none; 
+}  
+  
+::-webkit-scrollbar-track,  
+::-webkit-scrollbar-thumb {  
+  border-radius: 999px;  
+  border: 5px solid transparent;  
+}  
+  
+::-webkit-scrollbar-track {  
+  box-shadow: 1px 1px 5px rgba(0,0,0,.2) inset;  
+}  
+  
+::-webkit-scrollbar-thumb {  
+  min-height: 20px;  
+  background-clip: content-box;  
+  box-shadow: 0 0 0 5px rgba(0,0,0,.2) inset;  
+}  
+  
+::-webkit-scrollbar-corner {  
+  background: transparent;  
+} 
+
+/*signin.css*/
+
+.loginbox {
+    width: 380px;
+    height: 340px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+    background: #ffffff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -190px;
+    margin-top: -170px;
+}
+
+.loginbox .title {
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding-bottom: 10px;
+    line-height: 40px;
+    font-size: 18px;
+    border-bottom: 1px dotted #d5d5d5;
+}
+
+.loginbox .title img {
+    width: 100px;
+    height: 100px;
+}
+
+.loginbox .title h2 {
+    font-size: 100%;
+}
+
+.loginbox .loginwarp {
+    margin: 30px 50px;
+}
+
+.loginbox .loginwarp input[type='text'] {
+    width: 268px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 5px;
+    background: #ffffff;
+    border: 1px solid #dddddd;
+    margin-bottom: 35px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    -ms-border-radius: 2px;
+    -o-border-radius: 2px;
+    border-radius: 2px;
+    -webkit-transition: all 200ms;
+    -o-transition: all 200ms;
+    transition: all 200ms;
+    font-size: 100%;
+}
+
+.loginbox .loginwarp .btn {
+    height: 42px;
+    border: none;
+    background: #1f71ba;
+    text-align: center;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    width: 100%;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    -webkit-text-shadow: 1px 1px 1px #000000;
+    -moz-text-shadow: 1px 1px 1px #000000;
+    -ms-text-shadow: 1px 1px 1px #000000;
+    -o-text-shadow: 1px 1px 1px #000000;
+    text-shadow: 1px 1px 1px #000000;
+    -webkit-transition: all 200ms;
+    -o-transition: all 200ms;
+    transition: all 200ms;
+}

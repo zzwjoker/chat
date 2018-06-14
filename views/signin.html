@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% block main %}
+
+<script>
+    $(function(){
+        if(`{{ name }}`) {
+            $('#warn').css("transform","scale(1)").text('用户名已经存在！');
+            setTimeout(function(){
+                $('#warn').css("transform","scale(0)");
+            },1000);
+        }
+        $('#join').submit(function(e){
+            var name = $('#name').val();
+            if(name === '') {
+                $('#warn').css("transform","scale(1)").text('用户名不能为空！');
+                setTimeout(function(){
+                    $('#warn').css("transform","scale(0)");
+                },1000);
+                e.preventDefault();
+            }
+        });
+    })
+</script>
+
+
+<div class="loginbox">
+    <div class="title">
+        <img src="../static/images/logo.jpg">
+        <h2>欢迎加入聊天室</h2>
+    </div>
+
+    <div class="loginwarp">
+        <form action="/signin" method="post" id="join">
+            <input type="text" name="name" class="formcontrol" id="name" placeholder="请输入你的名字">
+            <button type="submit" class="btn">加入聊天室</button>
+        </form>
+    </div>
+
+    <div id="warn" style="position:absolute; top:147.5px; left: 100px; width:180px; height: 45px; background-color:rgba(0, 0, 0, 0.5); color:#fff; line-height:45px; text-align: center; font-size:15px;transform:scale(0); transition: 0.5s;">
+    </div>
+</div>
+
+{% endblock %}

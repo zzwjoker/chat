@@ -1,0 +1,358 @@
+{% extends "base.html" %} {% block main %}
+<script>
+function addToUserList(list, user) {
+    var i;
+    //可以判断是否同一浏览器标签
+    for (i = 0; i < list.length; i++) {
+        if (list[i].id === user.id) {
+            return;
+        }
+    }
+    list.push(user);
+}
+
+function removeFromUserList(list, user) {
+    var i, target = -1;
+    for (i = 0; i < list.length; i++) {
+        if (list[i].id === user.id) {
+            target = i;
+            break;
+        }
+    }
+    if (target >= 0) {
+        list.splice(target, 1);
+    }
+}
+
+function addMessage(list, msg) {
+    list.push(msg);
+    var length = $('.msglist').length;
+    var height = 0;
+    if (length > 0) {
+        height = $('.msglist')[length-1].offsetHeight;
+    }
+    $('#message-list').parent().animate({
+        scrollTop: $('.showmsg')[0].scrollHeight + height
+    }, 300);
+}
+
+$(function() {
+    var vmMessageList = new Vue({
+        el: '#message-list',
+        data: {
+            messages: []
+        }
+    });
+    var vmUserList = new Vue({
+        el: '#user-list',
+        data: {
+            users: [],
+            count: 0
+        }
+    });
+
+    var ws = new WebSocket('ws://localhost:3000/ws/chat');
+
+    ws.onmessage = function(event) {
+        /*  
+         *    event.data
+         *    {
+         *        id: messageIndex,
+         *        type: type,
+         *        user: user,
+         *        data: data
+         *    }
+         */
+        var data = event.data;
+        var msg = JSON.parse(data);
+        //显示页面出中的全部用户
+        if (msg.type === 'list') {
+            vmUserList.users = msg.data;
+        } else if (msg.type === 'join') {
+            addToUserList(vmUserList.users, msg.user);
+            addMessage(vmMessageList.messages, msg);
+        } else if (msg.type === 'left') {
+            removeFromUserList(vmUserList.users, msg.user);
+            addMessage(vmMessageList.messages, msg);
+        } else if (msg.type === 'chat') {
+            addMessage(vmMessageList.messages, msg);
+        }
+        vmUserList.count = vmUserList.users.length;
+    };
+
+    ws.onclose = function(evt) {
+        console.log('[closed] ' + evt.code);
+        var input = $('#form-chat').find('input[type=text]');
+        input.attr('placeholder', 'WebSocket disconnected.');
+        input.attr('disabled', 'disabled');
+        $('#form-chat').find('button').attr('disabled', 'disabled');
+    };
+
+    ws.onerror = function(code, msg) {
+        console.log('[ERROR] ' + code + ': ' + msg);
+    };
+
+    //发送消息
+    $('#form-chat').submit(function(e) {
+        e.preventDefault();
+        var input = $('#msgbox');
+        var text = input.html();
+        // var text = input.text().trim();
+        if (text) {
+            input.text('');
+            ws.send(text);
+        }
+    });
+
+    //获取粘贴的图片
+    document.querySelector('#msgbox').addEventListener('paste', function(e) {
+        var cbd = e.clipboardData;
+        for (var i = 0; i < cbd.items.length; i++) {
+            var item = cbd.items[i];
+            if (item.kind == "file") {
+                var blob = item.getAsFile();
+                if (blob.size === 0) {
+                    return;
+                }
+                // blob 就是从剪切板获得的文件 可以进行上传或其他操作
+                var reader = new FileReader();
+                var imgs = new Image();
+                imgs.file = blob;
+                reader.onload = (function(aImg) {
+                    return function(e) {
+                        aImg.src = e.target.result;
+                    };
+                })(imgs);
+                reader.readAsDataURL(blob);
+                document.querySelector('#msgbox').appendChild(imgs);
+            }
+        }
+    }, false);
+
+    // $('.userlist').click(function(event) {
+    //     if ( $(event.target).attr('class') === 'click' ) {
+    //         var user = $(event.target).text().trim();
+    //         ws.send(user);
+    //         console.log(user);
+    //     } else {
+    //         event.preventDefault;
+    //     }
+         
+    // });
+
+    //回车发送消息 & CTRL+ENTER换行
+    $('#msgbox').keydown(function(e){
+        if(!e.ctrlKey && e.keyCode==13) {
+            $('#btn').submit();
+            e.preventDefault();
+        }
+        if(e.ctrlKey && e.keyCode == 13) {
+            e.preventDefault();
+            $('#msgbox').append("<div><br></div>");
+            //设置输入焦点
+            var o = document.getElementById("msgbox").lastChild;            
+            var textbox = document.getElementById('msgbox');
+            var sel = window.getSelection();
+            var range = document.createRange();
+            range.selectNodeContents(textbox);
+            range.collapse(false);
+            range.setEndAfter(o);
+            range.setStartAfter(o);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    });
+
+    //表情包
+    $('#emoji, #exprebox').mouseover(function(){
+        $('#exprebox').css("display","block");
+    }).mouseout(function(){
+        $('#exprebox').css("display","none");
+    });
+
+    $('#exprebox img').click(function(event){
+        var imgs = new Image();
+        imgs.src = event.target.src;
+        $('#msgbox').append(imgs);
+    });
+
+    $('#mose').click(function() {
+        var p1 = document.getElementById('contain');
+        var a = true;
+        var count = 0;
+        function mose(){
+            setTimeout(function() {
+                if(a){
+                    p1.style.left += 20 + 'px';
+                } else {
+                    p1.style.left -= 20 + 'px';
+                }
+                a = !a;
+                count++;
+                if(count < 15) {
+                    mose();
+                }
+            }, 50);
+        }  
+        mose();                
+    });
+    /*$('.userlist').mousemove(function(event){
+        if ( $(event.target).attr('class') === 'img') {
+            $(event.target).parent().find('div.message').css("transform","scale(1)");
+        } else if( $(event.target).attr('class') === 'message' ){
+            $(event.target).css("transform","scale(1)");
+        } else if( $(event.target).attr('class') === 'info' ){
+            $(event.target).parent().css("transform","scale(1)");
+        } else {
+            event.preventDefault;
+        }   
+    }).mouseout(function(event){   
+        $('div.message').css("transform","scale(0)");  
+    });*/
+
+});
+</script>
+<div class="contain" id="contain">
+    <div class="left">
+        <div class="title">
+            <h2>聊天室</h2>
+            <span>
+            <span id="user">{{ user.name }}</span>
+            <span>|</span>
+            <a id="exit" href="/signout">退出</a>
+            </span>
+        </div>
+        <div class="showmsg">
+            <div id="message-list">
+                <div class="warp" v-for="msg in messages">
+                    <div class="system" v-if="msg.type === 'join'">
+                        <span class="msg">
+                            系统提示：
+                            <span class="mark" v-text="msg.data"></span>
+                            加入聊天室
+                        </span>   
+                    </div>
+                    <div class="system" v-if="msg.type === 'left'">
+                        <span class="msg">
+                            系统提示：
+                            <span class="mark" v-text="msg.data"></span>
+                            退出聊天室
+                        </span>   
+                    </div>
+
+                    <div v-if="msg.type === 'chat' && `{{ user.name }}` ===  msg.user.name">
+                        <div class="row">
+                            <div class="msglist me">
+                                <img class="proto" v-bind:src="'/static/images/' + msg.user.image + '.png'">
+                                <div class="msgwarp">
+                                    <div class="name" v-text="msg.user.name"></div>
+                                    <div class="contentmsg">
+                                        <div class="sanjiao"></div>
+                                        <div v-html="msg.data"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="msg.type === 'chat' && `{{ user.name }}` !==  msg.user.name"">
+                        <div class="row">
+                            <div class="msglist">
+                                <img class="proto" v-bind:src="'/static/images/' + msg.user.image + '.png'">
+                                <div class="msgwarp">
+                                    <div class="name" v-text="msg.user.name"></div>
+                                    <div class="contentmsg">
+                                        <div class="sanjiao"></div>
+                                        <div v-html="msg.data"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="sendmsg">
+            <div class="toolbar">
+                <div id="exprebox" class="exprebox">
+                    <img src="../static/images/emoji/1.png">
+                    <img src="../static/images/emoji/2.png">
+                    <img src="../static/images/emoji/3.png">
+                    <img src="../static/images/emoji/4.png">
+                    <img src="../static/images/emoji/5.png">
+                    <img src="../static/images/emoji/6.png">
+                    <img src="../static/images/emoji/7.png">
+                    <img src="../static/images/emoji/8.png">
+                    <img src="../static/images/emoji/9.png">
+                    <img src="../static/images/emoji/10.png">
+                    <img src="../static/images/emoji/11.png">
+                    <img src="../static/images/emoji/12.png">
+                    <img src="../static/images/emoji/13.png">
+                    <img src="../static/images/emoji/14.png">
+                    <img src="../static/images/emoji/15.png">
+                    <img src="../static/images/emoji/16.png">
+                    <img src="../static/images/emoji/17.png">
+                    <img src="../static/images/emoji/18.png">
+                    <img src="../static/images/emoji/19.png">
+                    <img src="../static/images/emoji/20.png">
+                    <img src="../static/images/emoji/21.png">
+                    <img src="../static/images/emoji/22.png">
+                    <img src="../static/images/emoji/23.png">
+                    <img src="../static/images/emoji/24.png">
+                    <img src="../static/images/emoji/25.png">
+                    <img src="../static/images/emoji/26.png">
+                    <img src="../static/images/emoji/27.png">
+                    <img src="../static/images/emoji/28.png">
+                    <img src="../static/images/emoji/29.png">
+                    <img src="../static/images/emoji/30.png">
+                    <img src="../static/images/emoji/31.png">
+                    <img src="../static/images/emoji/32.png">
+                    <img src="../static/images/emoji/33.png">
+                    <img src="../static/images/emoji/34.png">
+                    <img src="../static/images/emoji/35.png">
+                    <img src="../static/images/emoji/36.png">
+                    <img src="../static/images/emoji/37.png">
+                    <img src="../static/images/emoji/38.png">
+                    <img src="../static/images/emoji/39.png">
+                    <img src="../static/images/emoji/40.png">
+                    <img src="../static/images/emoji/41.png">
+                    <img src="../static/images/emoji/42.png">
+                    <img src="../static/images/emoji/43.png">
+                    <img src="../static/images/emoji/44.png">
+                    <img src="../static/images/emoji/45.png">
+                    <img src="../static/images/emoji/46.png">
+                    <img src="../static/images/emoji/47.png">
+                    <img src="../static/images/emoji/48.png">
+                    <img src="../static/images/emoji/49.png">
+                </div>
+                <div class="icobtn"><img id="emoji" src="../static/images/emoji.png"></div>
+                <!-- <div class="icobtn"><img id="mose" src="../static/images/mose.png"></div> -->
+            </div>
+            <form id="form-chat" action="#0">
+                <div id="msgbox" placeholder="请输入聊天内容" contenteditable="true"></div>
+                <div class="action">
+                    <span>按 CTRL+ENTER 换行</span>
+                    <button id="btn" class="btn" type="submit">发送</button>
+                </div>     
+            </form>
+        </div>
+
+    </div>
+    <div class="right">
+        <div id="user-list">
+            <div class="title" v-text=" '在线成员' + ' (' + count + ')'"></div>
+            <div class="userlist">
+                <div class="users" v-for="user in users">
+                    <img class="img" style="width:20px; height:20px;" v-bind:src="'/static/images/' + user.image + '.png'">
+                    <p class="click" v-text="user.name"></p>
+                    <div class="message">
+                        <span class="info" v-text="user.name"></span><img class="info" v-bind:src="'/static/images/' + user.image + '.png'">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
